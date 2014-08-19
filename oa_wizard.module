@@ -1,0 +1,93 @@
+<?php
+/**
+ * @file
+ * Code for the OpenAtrium Wizard.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function oa_wizard_menu() {
+  $items['wizard'] = array(
+    'page callback' => 'oa_wizard_add_content',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+  );
+  $items['wizard/%ctools_js/add'] = array(
+    'page callback' => 'oa_wizard_node_add_modal_callback',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/*
+ * Implements hook_ctools_plugin_directory
+ */
+function oa_wizard_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/content_types';
+  }
+}
+
+/**
+ * Add Content menu callback
+ */
+function oa_wizard_add_content() {
+  ctools_include('modal');
+  ctools_modal_add_js();
+
+  $output = l('Create Space', 'wizard/nojs/add/%', array(
+    'attributes' => array('class' => 'ctools-use-modal')));
+
+  return $output;
+}
+
+/**
+ * Node add modal callback.
+ */
+function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
+  global $user;
+  if (!$js) {
+    return drupal_goto('node/add/' . str_replace('_', '-', $type));
+  }
+
+  // Include your ctools stuff here
+  ctools_include('node.pages', 'node', '');
+  ctools_include('modal');
+  ctools_include('ajax');
+
+  // Create a blank node object here. You can also set values for your custom fields here as well.
+  $node = (object) array(
+    'uid' => $user->uid,
+    'name' => (isset($user->name) ? $user->name : ''),
+    'type' => $type,
+    'language' => LANGUAGE_NONE,
+  );
+
+  $form_state = array(
+    'title' => t('Add ' . $type),
+    'ajax' => TRUE,
+  );
+
+  $form_state['build_info']['args'] = array($node);
+  // change this to your type node form
+  $output = ctools_modal_form_wrapper($type . '_node_form', $form_state);
+
+  // This means the form has been exectued
+  if (!empty($form_state['executed'])) {
+    $output = array();
+    // Close the modal
+    $output[] = ctools_modal_command_dismiss();
+    // I use this method a lot on pages that have views, so what I do is get the latest view content
+    // with the latest node and replace the current view. magic!
+    /*
+    $html = views_embed_view('my_view', 'my_display';
+    $output[] = ajax_command_html('.view-display-id-my_display', $html);
+    */
+  }
+
+  print ajax_render($output);
+  exit;
+}
