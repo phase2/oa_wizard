@@ -132,6 +132,13 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
   ctools_include('ajax');
 
   $node_type = str_replace('-', '_', $type);
+  $steps = oa_wizard_get_steps($node_type);
+
+  // include the js and css for the wizards
+  $base = drupal_get_path('module', 'oa_wizard');
+  drupal_add_js($base . '/js/oa_wizard.js');
+  drupal_add_js(array('oa_wizard' => array('steps' => $steps)), 'setting');
+  drupal_add_css($base . '/css/oa_wizard.css');
 
   // Create a blank node object here. You can also set values for your custom fields here as well.
   $node = (object) array(
@@ -165,6 +172,45 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
 
   print ajax_render($output);
   exit;
+}
+
+/**
+ * Retrieve the wizard steps for a content type
+ * Expands a string value of the format:
+ *   Key1:Value1|Key2:Value2|Key3:Value3
+ * for each individual step (separated by newlines)
+ */
+function oa_wizard_get_steps($type) {
+  $steps = array();
+  $wizard = oa_wizard_load_by_name($type);
+  dsm($wizard);
+  if (isset($wizard)) {
+    $steps_string = $wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'];
+    $step_array = explode("\n", $steps_string);
+    foreach ($step_array as $index => $value) {
+      $values = explode("|", $value);
+      $step = array();
+      foreach ($values as $item) {
+        // check for key:value
+        $items = explode(':', $item);
+        if (count($items) == 1) {
+          // just a value
+          $step[] = trim($item);
+        }
+        else {
+          $key = trim($items[0]);
+          $trim_item =  trim($items[1]);
+          if (strpos($trim_item,'[') === 0) {
+            // check for array syntax [item1,item2...]
+            $trim_item = explode(',', substr($trim_item,1,strlen($trim_item)-2));
+          }
+          $step[$key] = $trim_item;
+        }
+      }
+    $steps[] = $step;
+    }
+  }
+  return $steps;
 }
 
 /**
@@ -350,11 +396,13 @@ function oa_wizard_entity_view($entity, $type, $view_mode, $langcode) {
     // expand newline to html breaks
     $entity->content['field_wizard_steps'][0]['#markup'] = nl2br($entity->content['field_wizard_steps'][0]['#markup']);
   }
-  // add the title of the wizard
-  $entity->content['title'] = array(
-    '#markup' => '<h3>' . check_plain($entity->title) . '</h3>',
-    '#weight' => -9,
-  );
+  if (isset($entity->title)) {
+    // add the title of the wizard
+    $entity->content['title'] = array(
+      '#markup' => '<h3>' . check_plain($entity->title) . '</h3>',
+      '#weight' => -9,
+    );
+  }
 }
 
 /**
@@ -437,6 +485,21 @@ function oa_wizard_entity_edit_form_submit($form, &$form_state) {
   if (!empty($form_state['add submit'])) {
     drupal_set_message(t('The entity has been saved.'));
   }
+}
+
+/**
+ * Load a wizard entity based on their machine name.
+ *
+ * @param $name string
+ */
+function oa_wizard_load_by_name($name) {
+  $wizard_id = db_select('oa_wizard', 'b')
+    ->fields('b', array('wizard_id'))
+    ->condition('name', $name)
+    ->execute()
+    ->fetchField(0);
+
+  return oa_wizard_load($wizard_id);
 }
 
 /**
