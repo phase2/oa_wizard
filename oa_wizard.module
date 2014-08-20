@@ -183,11 +183,10 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
 function oa_wizard_get_steps($type) {
   $steps = array();
   $wizard = oa_wizard_load_by_name($type);
-  dsm($wizard);
   if (isset($wizard)) {
     $steps_string = $wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'];
     $step_array = explode("\n", $steps_string);
-    foreach ($step_array as $index => $value) {
+    foreach ($step_array as $value) {
       $values = explode("|", $value);
       $step = array();
       foreach ($values as $item) {
@@ -479,7 +478,6 @@ function oa_wizard_entity_edit_form_submit($form, &$form_state) {
   field_attach_submit('oa_wizard', $entity, $form, $form_state);
 
   oa_wizard_save($entity);
-  dsm($entity);
 
   $form_state['redirect'] = 'admin/structure/wizards/view/' . $entity->wizard_id;
   if (!empty($form_state['add submit'])) {
