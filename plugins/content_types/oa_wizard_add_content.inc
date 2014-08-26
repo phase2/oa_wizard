@@ -31,6 +31,12 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
 
   $links = array();
   $class = !empty($conf['button_class']) ? $conf['button_class'] : '';
+  if (strpos($class, 'btn') !== FALSE) {
+    if (strpos($class, 'btn-') === FALSE) {
+      // handle default buttons in bootstrap 3
+      $class .= ' btn-default';
+    }
+  }
   $prefix = !empty($conf['title_prefix']) ? $conf['title_prefix'] : '';
   foreach ($nodes as $node_type) {
     $node = node_type_load($node_type);
