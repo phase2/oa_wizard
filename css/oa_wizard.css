@@ -1,0 +1,58 @@
+#oa-wizard {
+  margin-top: 40px;
+  position: relative;
+  left: 0%;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+}
+#oa-wizard.open {
+  left: 200px;
+}
+#oa-wizard .toggle-nav {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+@media (min-width: 600px) {
+  #oa-wizard .toggle-nav {
+    display: none;
+  }
+}
+#oa-wizard .nav {
+  position: absolute;
+  background: #ddd;
+  margin: 0;
+  width: 250px;
+  left: -220px;
+}
+@media (min-width: 600px) {
+  #oa-wizard .nav {
+    width: 30%;
+    left: 0;
+    float: left;
+    position: relative;
+  }
+}
+#oa-wizard .nav .active {
+  background: #cecece;
+}
+#oa-wizard .nav .badge, #oa-wizard .toggle-nav span {
+  float: right;
+}
+#oa-wizard .content {
+  float: right;
+  width: 90%;
+  padding-left: 20px;
+}
+@media (min-width: 600px) {
+  #oa-wizard .content {
+    width: 70%;
+  }
+}
+
+#modalContent #modal-content {
+  max-width: 900px;
+  margin: 0 auto;
+  height: auto !important;
+}
