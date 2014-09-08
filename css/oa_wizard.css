@@ -37,8 +37,22 @@
 #oa-wizard .nav .active {
   background: #cecece;
 }
+#oa-wizard .nav a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#oa-wizard .summary {
+  font-style: italic;
+}
 #oa-wizard .nav .badge, #oa-wizard .toggle-nav span {
   float: right;
+}
+@media (min-width: 600px) {
+  #oa-wizard .nav .badge, #oa-wizard .toggle-nav span {
+    display: none;
+  }
 }
 #oa-wizard .content {
   float: right;

@@ -17,6 +17,16 @@
       var   $form = $('.node-form');
             $html = "";
 
+      function updateTitle() {
+        if (title = $('#edit-title').val()) {
+             titleID = $('#edit-title').closest('.tab-pane').attr('id');
+             $targetTab = $('a[href="#' + titleID + '"]');
+             title = ": " + title;
+
+             $targetTab.find('.summary').html(title);
+        }
+      }
+
 ////
 // Set up HTML Stubs
 ////
@@ -52,6 +62,7 @@
 
       $.each($steps, function(key,value) {
         var tab = "",
+            navItem = "";
             fields = value['fields'],
             prevState = (key == 0 ? "disabled" : "enabled"),
             nextState = (key == Object.keys($steps).length -1 ? "disabled" : "enabled");
@@ -71,19 +82,28 @@
 ////
 // Append all Navigation Items
 ////
-        $("<li/>", {
-          html : $("<a/>", {
-                  "href"        : "#tab" + (key + 1),
-                  "role"        : "tab",
-                  "data-toggle" : "tab",
-                  text          : value['title']
-                  }).append(
-                    $("<span/>", {
-                      "class" : "badge",
-                      text    : key + 1
-                    }
-                  ))
-        }).appendTo($navItems);
+        $navItem = $("<li/>", {
+                    html : $("<a/>", {
+                            "href"        : "#tab" + (key + 1),
+                            "role"        : "tab",
+                            "data-toggle" : "tab",
+                            text          : value['title'],
+                            click         : function() {
+                              updateTitle();
+                            }
+                            }).append(
+                              $("<span/>", {
+                                "class" : "badge",
+                                text    : key + 1
+                              }
+                            )).append(
+                              $("<span/>", {
+                                 "class" : "summary",
+                                text    : ""
+                              }
+                            ))
+                          });
+        $navItem.appendTo($navItems);
 
 
 ////
@@ -108,6 +128,7 @@
                         text : "Previous",
                         click : function(e) {
                           e.preventDefault;
+                          updateTitle();
                           $('#oa-wizard [data-toggle="tab"]').eq(key - 1).tab('show');
                         }
                       }).attr(prevState, "");
@@ -119,6 +140,7 @@
                         text : "Next",
                         click : function(e) {
                           e.preventDefault;
+                          updateTitle();
                           $('#oa-wizard [data-toggle="tab"]').eq(key + 1).tab('show');
                         }
                       }).attr(nextState, "");
