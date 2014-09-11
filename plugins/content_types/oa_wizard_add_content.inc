@@ -37,13 +37,29 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
       $class .= ' btn-default';
     }
   }
+
+  $custom_style = array(
+    'oa-wizard' => array(
+      'modalSize' => array(
+        'type' => 'scale',
+        'width' => 0.5,
+        'height' => 0.5,
+      ),
+      'animation' => 'fadeIn',
+    ),
+  );
+
+  ctools_include('ajax');
+
+  drupal_add_js($custom_style, 'setting');
+
   $prefix = !empty($conf['title_prefix']) ? $conf['title_prefix'] : '';
   foreach ($nodes as $node_type) {
     $node = node_type_load($node_type);
     if (is_object($node) && node_access('create', $node_type)) {
       $links[] = '<li>' .
-        l($prefix . $node->name, 'wizard/nojs/add/' . str_replace('_', '-', $node_type) ,
-          array('attributes' => array('class' => 'ctools-use-modal ' . $class)))
+        ctools_modal_text_button($prefix . $node->name, 'wizard/nojs/add/' . str_replace('_', '-', $node_type),
+          $prefix . $node->name, $class . ' ctools-modal-oa-wizard')
         . '</li>';
     }
   }
