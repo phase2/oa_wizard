@@ -149,7 +149,7 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
   );
 
   $form_state = array(
-    'title' => t('Add ' . $type),
+    'title' => t('Add New ' . node_type_get_name(str_replace('-', '_', $type))),
     'ajax' => TRUE,
   );
 
