@@ -163,7 +163,6 @@
       $form.prepend($html);
       // show first item
       $('#oa-wizard [data-toggle="tab"]').eq(0).tab('show');
-      console.log($steps);
     }
   }
 
