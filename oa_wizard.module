@@ -254,7 +254,7 @@ function oa_wizard_entity_info() {
       'exportable' => TRUE,
       'entity keys' => array(
         'id' => 'wizard_id',
-        'name' => 'name',
+        'label' => 'name',
         'bundle' => 'bundle',
       ),
       'view callback' => 'entity_metadata_view_single',
