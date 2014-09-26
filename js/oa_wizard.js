@@ -15,14 +15,13 @@
        'showhelp' : TRUE to show help text, false to hide help text
        */
       var $form = $('.node-form');
-      $html = "";
 
       ////
       // Set up HTML Stubs
       ////
 
       // Set up the Nav Container HTML
-      $navItems = $("<ul/>", {
+      var $navItems = $("<ul/>", {
         "class": "nav",
         "role": "tablist",
         html: $("<li/>", {
@@ -35,14 +34,14 @@
             }
           }).append(
             $("<span/>", {
-              "class": "glyphicon glyphicon-th-list",
+              "class": "glyphicon glyphicon-th-list"
             })
             )
         })
       });
 
       // Set Up the Tab Container HTML
-      $tabContent = $("<div/>", {
+      var $tabContent = $("<div/>", {
         "class": "tab-content"
       });
 
@@ -62,9 +61,9 @@
         });
 
         // clean tab container
-        $tab = $("<div/>", {
+        var $tab = $("<div/>", {
           "class": "tab-pane",
-          "id": "tab" + (key + 1),
+          "id": "tab" + (key + 1)
         });
 
         ////
@@ -100,25 +99,25 @@
         });
 
         // create prev/next buttons
-        $prevButton = $("<button/>", {
+        var $prevButton = $("<button/>", {
           "class": "btn btn-primary",
           "type": "button",
           href: "#",
           text: "Previous",
           click: function (e) {
-            e.preventDefault;
-            $('#oa-wizard [data-toggle="tab"]').eq(key - 1).tab('show');
+            e.preventDefault();
+            $('#oa-wizard').find('[data-toggle="tab"]').eq(key - 1).tab('show');
           }
         }).attr(prevState, "");
 
-        $nextButton = $("<button/>", {
+        var $nextButton = $("<button/>", {
           "class": "btn btn-primary",
           "type": "button",
           href: "#",
           text: "Next",
           click: function (e) {
-            e.preventDefault;
-            $('#oa-wizard [data-toggle="tab"]').eq(key + 1).tab('show');
+            e.preventDefault();
+            $('#oa-wizard').find('[data-toggle="tab"]').eq(key + 1).tab('show');
           }
         }).attr(nextState, "");
 
@@ -128,7 +127,6 @@
         if (nextState == 'disabled') {
           $('#edit-actions').detach().appendTo($buttons);
         }
-        ;
 
         // place buttons at bottom of tab
         $buttons.appendTo($tab);
@@ -142,7 +140,7 @@
       // Put it all together
       ////
 
-      $html = $("<div/>", {
+      var $html = $("<div/>", {
         "class": "",
         "id": "oa-wizard",
         html: $("<div/>", {
@@ -162,7 +160,7 @@
       $form.find('div').hide();
       $form.prepend($html);
       // show first item
-      $('#oa-wizard [data-toggle="tab"]').eq(0).tab('show');
+      $('#oa-wizard').find('[data-toggle="tab"]').eq(0).tab('show');
     }
   }
 
