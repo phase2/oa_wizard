@@ -162,12 +162,14 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
     $output = array();
     // Close the modal
     $output[] = ctools_modal_command_dismiss();
-    // I use this method a lot on pages that have views, so what I do is get the latest view content
-    // with the latest node and replace the current view. magic!
-    /*
-    $html = views_embed_view('my_view', 'my_display';
-    $output[] = ajax_command_html('.view-display-id-my_display', $html);
-    */
+    $output[] = array
+    (
+      // The command will be used in our JavaScript file (see next section)
+      'command' => 'oaWizardNew',
+      // We pass the value that the user selected in the select element to our
+      // JavaScript function:
+      'node' => $form_state['node'],
+    );
   }
 
   print ajax_render($output);

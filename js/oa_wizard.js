@@ -5,6 +5,12 @@
 
 (function ($) {
 
+  Drupal.ajax.prototype.commands.oaWizardNew = function(ajax, response, status) {
+    // called when the ajax for adding node has completed
+    // trigger an event to notify anybody who might need the node data
+    $(document).trigger('oaWizardNew', response.node);
+  };
+
   Drupal.behaviors.oaWizard = {
     attach: function (context, settings) {
       var $steps = settings.oa_wizard.steps;
