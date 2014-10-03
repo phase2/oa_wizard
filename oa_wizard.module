@@ -125,7 +125,6 @@ function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
     drupal_goto('node/add/' . $type);
     exit;
   }
-  dsm($_GET);
 
   // Include your ctools stuff here
   ctools_include('node.pages', 'node', '');
