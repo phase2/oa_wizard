@@ -58,7 +58,7 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
     $node = node_type_load($node_type);
     if (is_object($node) && node_access('create', $node_type)) {
       $links[] = '<li>' .
-        ctools_modal_text_button($prefix . $node->name, 'wizard/nojs/add/' . str_replace('_', '-', $node_type),
+        ctools_modal_text_button($prefix . $node->name, 'api/oa_wizard/nojs/add/' . str_replace('_', '-', $node_type),
           $prefix . $node->name, $class . ' ctools-modal-oa-wizard')
         . '</li>';
     }
