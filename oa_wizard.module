@@ -21,9 +21,9 @@ function oa_wizard_menu() {
     'page arguments' => array(1),
     'access arguments' => array('access content'),
   );
-  $items['api/oa_wizard/%ctools_js/add/%'] = array(
+  $items['api/oa_wizard/add/%'] = array(
     'page callback' => 'oa_wizard_node_add_modal_callback',
-    'page arguments' => array(2,4),
+    'page arguments' => array(3),
     'access arguments' => array('access content'),
   );
 
@@ -119,12 +119,8 @@ function oa_wizard_add_content() {
 /**
  * Node add modal callback.
  */
-function oa_wizard_node_add_modal_callback($js = FALSE, $type) {
+function oa_wizard_node_add_modal_callback($type) {
   global $user;
-  if (!$js) {
-    drupal_goto('node/add/' . $type);
-    exit;
-  }
 
   // Include your ctools stuff here
   ctools_include('node.pages', 'node', '');
