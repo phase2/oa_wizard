@@ -1,6 +1,12 @@
 <?php
 /**
  * @file
+ * Code for the Open Atrium Wizard feature.
+ */
+
+include_once 'oa_wizard.features.inc';
+/**
+ * @file
  * Code for the OpenAtrium Wizard.
  */
 
@@ -233,6 +239,7 @@ function oa_wizard_entity_info() {
       'entity keys' => array(
         'id' => 'wizard_id',
         'label' => 'name',
+        'name' => 'name',
         'bundle' => 'bundle',
       ),
       'view callback' => 'entity_metadata_view_single',
