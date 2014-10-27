@@ -5,20 +5,6 @@
  */
 
 /**
-* Admin Form.
-*/
-function oa_wizard_admin_form($form, &$form_state) {
-  $form['oa_wizard_steps'] = array(
-    '#title' => t('Steps'),
-    '#description' => t('Enter the steps for this wizard.'),
-    '#type' => 'textarea',
-    '#default_value' => variable_get('oa_wizard_steps', ''),
-  );
-
-  return system_settings_form($form);
-}
-
-/**
  * List all bundles and administrative options for wizards.
  */
 function oa_wizard_entities_page() {

@@ -85,3 +85,15 @@ function oa_wizard_schema() {
 
   return $schema;
 }
+
+/**
+ * Add the machine name as the content type.
+ */
+function oa_wizard_update_7101() {
+  foreach (entity_load('oa_wizard') as $wizard) {
+    if (empty($wizard-> field_wizard_type)) {
+      $wizard->field_wizard_type[LANGUAGE_NONE][0]['value'] = $wizard->name;
+      oa_wizard_save($wizard);
+    }
+  }
+}

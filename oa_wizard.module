@@ -8,14 +8,6 @@
  * Implements hook_menu().
  */
 function oa_wizard_menu() {
-  $items['admin/config/content/wizards'] = array(
-    'title' => 'Wizards',
-    'description' => 'Manage wizards.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('oa_wizard_admin_form'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'oa_wizard.admin.inc',
-  );
   $items['wizard'] = array(
     'page callback' => 'oa_wizard_add_content',
     'page arguments' => array(1),
@@ -119,7 +111,7 @@ function oa_wizard_add_content() {
 /**
  * Node add modal callback.
  */
-function oa_wizard_node_add_modal_callback($type) {
+function oa_wizard_node_add_modal_callback($wizard_name) {
   global $user;
 
   // Include your ctools stuff here
@@ -127,8 +119,15 @@ function oa_wizard_node_add_modal_callback($type) {
   ctools_include('modal');
   ctools_include('ajax');
 
-  $node_type = str_replace('-', '_', $type);
-  $steps = oa_wizard_get_steps($node_type);
+  $wizard_name = str_replace('-', '_', $wizard_name);
+  $wizard = oa_wizard_load_by_name($wizard_name);
+  if (!$wizard || empty($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) || !node_access('create', $wizard->field_wizard_type[LANGUAGE_NONE][0]['value'])) {
+    drupal_set_message(t('Unable to load wizard'), 'error');
+    return drupal_access_denied();
+  }
+  $node_type = $wizard->field_wizard_type[LANGUAGE_NONE][0]['value'];
+
+  $steps = oa_wizard_get_steps($wizard_name);
 
   // include the js and css for the wizards
   $base = drupal_get_path('module', 'oa_wizard');
@@ -145,7 +144,7 @@ function oa_wizard_node_add_modal_callback($type) {
   );
 
   $form_state = array(
-    'title' => t('Add New ' . node_type_get_name(str_replace('-', '_', $type))),
+    'title' => t('Add New @name', array('@name' => node_type_get_name($node_type))),
     'ajax' => TRUE,
   );
 
@@ -158,8 +157,7 @@ function oa_wizard_node_add_modal_callback($type) {
     $output = array();
     // Close the modal
     $output[] = ctools_modal_command_dismiss();
-    $output[] = array
-    (
+    $output[] = array(
       // The command will be used in our JavaScript file (see next section)
       'command' => 'oaWizardNew',
       // We pass the value that the user selected in the select element to our
@@ -167,7 +165,6 @@ function oa_wizard_node_add_modal_callback($type) {
       'node' => $form_state['node'],
     );
   }
-
   print ajax_render($output);
   exit;
 }
@@ -309,7 +306,7 @@ function oa_wizard_type_load($type) {
  *   Whether access is allowed or not.
  */
 function oa_wizard_access($op, $wizard = NULL, $account = NULL) {
-  return user_access('administer site configuration');
+  return user_access('administer site configuration', $account);
 }
 
 /**
@@ -353,7 +350,10 @@ function oa_wizard_create($values = array()) {
  *   The oa_wizard object.
  */
 function oa_wizard_save($wizard) {
-  return entity_save('oa_wizard', $wizard);
+  $return = entity_save('oa_wizard', $wizard);
+  cache_clear_all('oa_wizard_wizard_options', 'cache');
+  drupal_static_reset('oa_wizard_wizard_options');
+  return $return;
 }
 
 /**
@@ -370,7 +370,7 @@ function oa_wizard_views_api() {
  * List all entities for the given type.
  */
 function oa_wizard_entities_list_page($type) {
-  return views_embed_view('oa_wizard_entities', 'default', $type);
+  return views_embed_view('oa_wizard_entities', 'default');
 }
 
 /**
@@ -509,4 +509,22 @@ function oa_wizard_machine_name_exists($value) {
     ->fetchField();
 
   return !empty($name_exists);
+}
+
+/**
+ * Get all options for wizards, name => label.
+ */
+function oa_wizard_wizard_options($reset = FALSE) {
+  $options = &drupal_static(__FUNCTION__);
+  if ($reset || !isset($options)) {
+    if (!$reset && ($cache = cache_get(__FUNCTION__))) {
+      $options = $cache->data;
+    }
+    else {
+      foreach (entity_load('oa_wizard') as $wizard) {
+        $options[$wizard->name] = check_plain($wizard->title);
+      }
+    }
+  }
+  return $options;
 }

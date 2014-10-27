@@ -13,7 +13,7 @@ $plugin = array(
   'edit form' => 'oa_wizard_add_content_edit_form',
   'render callback' => 'oa_wizard_add_content_render',
   'defaults' => array(
-    'content_types' => '',
+    'wizards' => '',
     'button_class' => '',
     'title_prefix' => '',
   ),
@@ -27,7 +27,7 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
   ctools_include('modal');
   ctools_modal_add_js();
 
-  $nodes = $conf['content_types'];
+  $wizards = isset($conf['wizards']) ? $conf['wizards'] : (isset($conf['content_types']) ? $conf['content_types'] : array());
 
   $links = array();
   $class = !empty($conf['button_class']) ? $conf['button_class'] : '';
@@ -54,12 +54,13 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
   drupal_add_js($custom_style, 'setting');
 
   $prefix = !empty($conf['title_prefix']) ? $conf['title_prefix'] : '';
-  foreach ($nodes as $node_type) {
-    $node = node_type_load($node_type);
-    if (is_object($node) && node_access('create', $node_type)) {
+  foreach ($wizards as $wizard_name) {
+    $wizard = oa_wizard_load_by_name($wizard_name);
+    $content_type_info = !empty($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) ? node_type_load($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) : NULL;
+    if (is_object($content_type_info) && node_access('create', $content_type_info->type)) {
       $links[] = '<li>' .
-        ctools_modal_text_button($prefix . $node->name, 'api/oa_wizard/add/' . str_replace('_', '-', $node_type),
-          $prefix . $node->name, $class . ' ctools-modal-oa-wizard')
+        ctools_modal_text_button($prefix . $content_type_info->name, 'api/oa_wizard/add/' . str_replace('_', '-', $wizard_name),
+          $prefix . $content_type_info->name, $class . ' ctools-modal-oa-wizard')
         . '</li>';
     }
   }
@@ -79,34 +80,39 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
  * Edit form for the panel.
  */
 function oa_wizard_add_content_edit_form($form, &$form_state) {
-  $conf = $form_state['conf'];
-  $nodes = node_type_get_types();
+  $conf = &$form_state['conf'];
 
-  $options = array();
-  foreach ($nodes as $node) {
-    $options[$node->type] = check_plain($node->name);
+  if ($options = oa_wizard_wizard_options()) {
+    if (isset($conf['content_types']) && !isset($conf['wizards'])) {
+      $conf['wizards'] = $conf['content_types'];
+      unset($conf['content_types']);
+    }
+    $form['wizards'] = array(
+      '#title' => t('Wizards'),
+      '#type' => 'checkboxes',
+      '#options' => $options,
+      '#default_value' => isset($conf['wizards']) ? $conf['wizards'] : array_values($options),
+      '#description' => t('Select which content types you wish to display Add buttons for.'),
+    );
+    $form['button_class'] = array(
+      '#title' => t('CSS class for links'),
+      '#type' => 'textfield',
+      '#default_value' => $conf['button_class'],
+      '#description' => 'Enter CSS class for links, such as btn.'
+    );
+    $form['title_prefix'] = array(
+      '#title' => t('Title Prefix'),
+      '#type' => 'textfield',
+      '#default_value' => $conf['title_prefix'],
+      '#description' => 'Enter prefix text for link titles.'
+    );
   }
-  $form['content_types'] = array(
-    '#title' => t('Enable content types'),
-    '#type' => 'checkboxes',
-    '#options' => $options,
-    '#default_value' => isset($conf['content_types']) ? $conf['content_types'] : array_values($options),
-    '#description' => t('Select which content types you wish to display Add buttons for.'),
-  );
-
-  $form['button_class'] = array(
-    '#title' => t('CSS class for links'),
-    '#type' => 'textfield',
-    '#default_value' => $conf['button_class'],
-    '#description' => 'Enter CSS class for links, such as btn.'
-  );
-
-  $form['title_prefix'] = array(
-    '#title' => t('Title Prefix'),
-    '#type' => 'textfield',
-    '#default_value' => $conf['title_prefix'],
-    '#description' => 'Enter prefix text for link titles.'
-  );
+  else {
+    $form['not_configured']['#markup'] = t('Wizard it not properly configured.');
+    if (user_access('administer site configuration')) {
+      $form['not_configured']['#markup'] .= ' ' . l(t('Add a wizard?'), 'admin/structure/wizards/manage/wizard/add');
+    }
+  }
 
   return $form;
 }

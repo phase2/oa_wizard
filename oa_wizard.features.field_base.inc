@@ -37,5 +37,30 @@ function oa_wizard_field_default_field_bases() {
     'type' => 'text_long',
   );
 
+  // Exported field_base: 'field_wizard_type'
+  $field_bases['field_wizard_type'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_wizard_type',
+    'foreign keys' => array(),
+    'indexes' => array(
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'list',
+    'settings' => array(
+      'allowed_values' => array(
+        'oa_space' => 'oa_space',
+      ),
+      'allowed_values_function' => 'node_type_get_names',
+    ),
+    'translatable' => 0,
+    'type' => 'list_text',
+  );
+
   return $field_bases;
 }
