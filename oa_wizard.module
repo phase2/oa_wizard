@@ -8,11 +8,6 @@
  * Implements hook_menu().
  */
 function oa_wizard_menu() {
-  $items['wizard'] = array(
-    'page callback' => 'oa_wizard_add_content',
-    'page arguments' => array(1),
-    'access arguments' => array('access content'),
-  );
   $items['api/oa_wizard/add/%'] = array(
     'page callback' => 'oa_wizard_node_add_modal_callback',
     'page arguments' => array(3),
@@ -96,19 +91,6 @@ function oa_wizard_ctools_plugin_directory($owner, $plugin_type) {
 }
 
 /**
- * Add Content menu callback
- */
-function oa_wizard_add_content() {
-  ctools_include('modal');
-  ctools_modal_add_js();
-
-  $output = l('Create Space', 'wizard/nojs/add/oa-space', array(
-    'attributes' => array('class' => 'ctools-use-modal')));
-
-  return $output;
-}
-
-/**
  * Node add modal callback.
  */
 function oa_wizard_node_add_modal_callback($wizard_name) {
@@ -170,15 +152,16 @@ function oa_wizard_node_add_modal_callback($wizard_name) {
 }
 
 /**
- * Retrieve the wizard steps for a content type
+ * Retrieve the wizard steps for a wizard.
+ *
  * Expands a string value of the format:
  *   Key1:Value1|Key2:Value2|Key3:Value3
  * for each individual step (separated by newlines)
  */
-function oa_wizard_get_steps($type) {
+function oa_wizard_get_steps($wizard_name) {
   $steps = array();
-  $wizard = oa_wizard_load_by_name($type);
-  if (isset($wizard)) {
+  $wizard = oa_wizard_load_by_name($wizard_name);
+  if (isset($wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'])) {
     $steps_string = $wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'];
     $step_array = explode("\n", $steps_string);
     foreach ($step_array as $value) {
@@ -196,7 +179,7 @@ function oa_wizard_get_steps($type) {
           $trim_item =  trim($items[1]);
           if (strpos($trim_item,'[') === 0) {
             // check for array syntax [item1,item2...]
-            $trim_item = explode(',', substr($trim_item,1,strlen($trim_item)-2));
+            $trim_item = explode(',', substr($trim_item, 1, strlen($trim_item)-2));
           }
           $step[$key] = $trim_item;
         }
@@ -524,6 +507,7 @@ function oa_wizard_wizard_options($reset = FALSE) {
       foreach (entity_load('oa_wizard') as $wizard) {
         $options[$wizard->name] = check_plain($wizard->title);
       }
+      cache_set(__FUNCTION__, $options);
     }
   }
   return $options;
