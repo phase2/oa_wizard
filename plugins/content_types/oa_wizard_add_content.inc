@@ -55,7 +55,7 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
 
   $prefix = !empty($conf['title_prefix']) ? $conf['title_prefix'] : '';
   foreach ($wizards as $wizard_name) {
-    $wizard = oa_wizard_load_by_name($wizard_name);
+    $wizard = oa_wizard_machine_name_load($wizard_name);
     $content_type_info = !empty($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) ? node_type_load($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) : NULL;
     if (is_object($content_type_info) && node_access('create', $content_type_info->type)) {
       $links[] = '<li>' .

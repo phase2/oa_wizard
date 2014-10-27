@@ -102,7 +102,7 @@ function oa_wizard_node_add_modal_callback($wizard_name) {
   ctools_include('ajax');
 
   $wizard_name = str_replace('-', '_', $wizard_name);
-  $wizard = oa_wizard_load_by_name($wizard_name);
+  $wizard = oa_wizard_machine_name_load($wizard_name);
   if (!$wizard || empty($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) || !node_access('create', $wizard->field_wizard_type[LANGUAGE_NONE][0]['value'])) {
     drupal_set_message(t('Unable to load wizard'), 'error');
     return drupal_access_denied();
@@ -160,7 +160,7 @@ function oa_wizard_node_add_modal_callback($wizard_name) {
  */
 function oa_wizard_get_steps($wizard_name) {
   $steps = array();
-  $wizard = oa_wizard_load_by_name($wizard_name);
+  $wizard = oa_wizard_machine_name_load($wizard_name);
   if (isset($wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'])) {
     $steps_string = $wizard->field_wizard_steps[LANGUAGE_NONE][0]['value'];
     $step_array = explode("\n", $steps_string);
@@ -471,7 +471,7 @@ function oa_wizard_entity_edit_form_submit($form, &$form_state) {
  *
  * @param $name string
  */
-function oa_wizard_load_by_name($name) {
+function oa_wizard_machine_name_load($name) {
   $wizard_id = db_select('oa_wizard', 'b')
     ->fields('b', array('wizard_id'))
     ->condition('name', $name)
