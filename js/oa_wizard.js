@@ -22,6 +22,36 @@
        */
       var $form = $('.node-form');
 
+      // Bind a keypress on escape for closing the modalContent
+      wizardKeyHandler = function(event) {
+        // Enter or Down-arrow
+        if ((event.keyCode == 13) || (event.keyCode == 40)) {
+          var $next = $('#oa-wizard .tab-pane.active .oa-wizard-next');
+          if (($next.length > 0) && !$next[0].disabled) {
+            event.preventDefault();
+            $next.first().trigger('click');
+            return false;
+          }
+          else if (event.keyCode == 13) {
+            $('#modal-content form').trigger('submit');
+            return false;
+          }
+        }
+        // Up-arrow
+        else if (event.keyCode == 38) {
+          var $prev = $('#oa-wizard .tab-pane.active .oa-wizard-prev');
+          if (($prev.length > 0) && !$prev[0].disabled) {
+            event.preventDefault();
+            $prev.first().trigger('click');
+            return false;
+          }
+        }
+      };
+
+      $('body').once('oa-wizard', function() {
+        $(document).keydown(wizardKeyHandler);
+      });
+
       ////
       // Set up HTML Stubs
       ////
@@ -106,7 +136,7 @@
 
         // create prev/next buttons
         var $prevButton = $("<button/>", {
-          "class": "btn btn-primary",
+          "class": "btn btn-primary oa-wizard-prev",
           "type": "button",
           href: "#",
           text: "Previous",
@@ -117,7 +147,7 @@
         }).attr(prevState, "");
 
         var $nextButton = $("<button/>", {
-          "class": "btn btn-primary",
+          "class": "btn btn-primary oa-wizard-next",
           "type": "button",
           href: "#",
           text: "Next",
