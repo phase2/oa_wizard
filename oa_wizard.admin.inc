@@ -93,7 +93,7 @@ function oa_wizard_entity_delete_form($form, &$form_state, $entity) {
   $form_state['entity'] = $entity;
   return confirm_form($form,
     t('Are you sure you want to delete %title?', array('%title' => $entity->title)),
-    'admin/structure/wizards/view/' . $entity->bid,
+    'admin/structure/wizards/view/' . $entity->wizard_id,
     t('This action cannot be undone. Note that deleting this entity will not delete panes using it, they will exist but display nothing.'),
     t('Delete'),
     t('Cancel')
@@ -106,7 +106,7 @@ function oa_wizard_entity_delete_form($form, &$form_state, $entity) {
 function oa_wizard_entity_delete_form_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
     $entity = $form_state['entity'];
-    command_buttons_delete($entity->bid);
+    oa_wizard_delete($entity->wizard_id);
     watchdog('oa_wizard', '@type: deleted %title.', array('@type' => $entity->bundle, '%title' => $entity->title));
     drupal_set_message(t('@type %title has been deleted.', array('@type' => command_buttons_entities_title($entity->bundle), '%title' => $entity->title)));
   }
