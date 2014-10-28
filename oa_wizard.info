@@ -7,7 +7,6 @@ dependencies[] = entity
 dependencies[] = features
 dependencies[] = list
 dependencies[] = oa_core
-dependencies[] = oa_wizard
 dependencies[] = options
 dependencies[] = text
 apps[screenshots][] = app/screenshot.png

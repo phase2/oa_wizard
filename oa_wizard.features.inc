@@ -37,9 +37,9 @@ function oa_wizard_default_oa_wizard() {
     "data" : null,
     "field_wizard_steps" : { "und" : [
         {
-          "value" : "title: Title | fields: [title]\\r\\ntitle: Space Type | fields: [field_oa_space_type,oa_parent_space]\\r\\ntitle: Space Access | fields: [group_access]",
+          "value" : "title: Title | fields: [title]\\r\\ntitle: Space Type | fields: [field_oa_space_type]\\r\\ntitle: Space Access | fields: [group_access]",
           "format" : null,
-          "safe_value" : "title: Title | fields: [title]\\r\\ntitle: Space Type | fields: [field_oa_space_type,oa_parent_space]\\r\\ntitle: Space Access | fields: [group_access]"
+          "safe_value" : "title: Title | fields: [title]\\r\\ntitle: Space Type | fields: [field_oa_space_type]\\r\\ntitle: Space Access | fields: [group_access]"
         }
       ]
     },
