@@ -14,9 +14,9 @@ include_once 'oa_wizard.features.inc';
  * Implements hook_menu().
  */
 function oa_wizard_menu() {
-  $items['api/oa_wizard/add/%'] = array(
-    'page callback' => 'oa_wizard_node_add_modal_callback',
-    'page arguments' => array(3),
+  $items['api/oa_wizard/%'] = array(
+    'page callback' => 'oa_wizard_modal_callback',
+    'page arguments' => array(2),
     'access arguments' => array('access content'),
   );
 
@@ -99,7 +99,7 @@ function oa_wizard_ctools_plugin_directory($owner, $plugin_type) {
 /**
  * Node add modal callback.
  */
-function oa_wizard_node_add_modal_callback($wizard_name) {
+function oa_wizard_modal_callback($wizard_name) {
   global $user;
 
   // Include your ctools stuff here

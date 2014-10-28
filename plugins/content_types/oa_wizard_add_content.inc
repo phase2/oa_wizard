@@ -59,7 +59,7 @@ function oa_wizard_add_content_render($subtype, $conf, $args, $context = NULL) {
     $content_type_info = !empty($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) ? node_type_load($wizard->field_wizard_type[LANGUAGE_NONE][0]['value']) : NULL;
     if (is_object($content_type_info) && node_access('create', $content_type_info->type)) {
       $links[] = '<li>' .
-        ctools_modal_text_button($prefix . $content_type_info->name, 'api/oa_wizard/add/' . str_replace('_', '-', $wizard_name),
+        ctools_modal_text_button($prefix . $content_type_info->name, 'api/oa_wizard/' . str_replace('_', '-', $wizard_name),
           $prefix . $content_type_info->name, $class . ' ctools-modal-oa-wizard')
         . '</li>';
     }
